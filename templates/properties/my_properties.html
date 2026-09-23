@@ -1,0 +1,40 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="container my-5">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h2 class="fw-bold">🏙️ My Listed Properties</h2>
+        <a href="{% url 'add-property-ui' %}" class="btn btn-primary fw-bold">+ Add New Property</a>
+    </div>
+
+    <div class="row">
+        {% for property in properties %}
+        <div class="col-md-4 mb-4">
+            <div class="card shadow-sm h-100 border-0">
+                {% if property.image %}
+                    <img src="{{ property.image.url }}" class="card-img-top" style="height: 200px; object-fit: cover;" alt="{{ property.title }}">
+                {% else %}
+                    <div class="bg-secondary text-white text-center py-5">No Image</div>
+                {% endif %}
+
+                <div class="card-body">
+                    <h5 class="card-title fw-bold">{{ property.title }}</h5>
+                    <p class="text-muted small">📍 {{ property.location }}</p>
+                    <h5 class="text-success fw-bold">${{ property.price }}</h5>
+                </div>
+
+                <div class="card-footer bg-white border-top-0 d-flex justify-content-between pb-3">
+                    <a href="{% url 'edit-property-ui' property.id %}" class="btn btn-outline-warning btn-sm fw-bold">✏️ Edit</a>
+                    <a href="{% url 'delete-property-ui' property.id %}" class="btn btn-outline-danger btn-sm fw-bold">🗑️ Delete</a>
+                </div>
+            </div>
+        </div>
+        {% empty %}
+        <div class="col-12 text-center py-5">
+            <p class="text-muted fs-5">You didn't Added any Property yet!</p>
+            <a href="{% url 'add-property-ui' %}" class="btn btn-success fw-bold">ADD First Property</a>
+        </div>
+        {% endfor %}
+    </div>
+</div>
+{% endblock %}

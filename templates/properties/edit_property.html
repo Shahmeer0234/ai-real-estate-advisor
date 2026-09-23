@@ -1,0 +1,64 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="container my-5">
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <div class="card shadow-lg border-0 p-4 rounded-3">
+                <h3 class="fw-bold mb-4 text-center">✏️ Edit Property Details</h3>
+                
+                <form method="POST" enctype="multipart/form-data">
+                    {% csrf_token %}
+                    
+                    <div class="mb-3">
+                        <label class="form-label fw-bold">Property Title</label>
+                        <input type="text" name="title" class="form-control" value="{{ property.title }}" required>
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label fw-bold">Location</label>
+                        <input type="text" name="location" class="form-control" value="{{ property.location }}" required>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label fw-bold">Price ($)</label>
+                            <input type="number" name="price" class="form-control" value="{{ property.price }}" required>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label fw-bold">Area (SqFt)</label>
+                            <input type="number" name="area_sqft" class="form-control" value="{{ property.area_sqft }}" required>
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label fw-bold">Bedrooms</label>
+                            <input type="number" name="bedrooms" class="form-control" value="{{ property.bedrooms }}" required>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label fw-bold">Bathrooms</label>
+                            <input type="number" name="bathrooms" class="form-control" value="{{ property.bathrooms }}" required>
+                        </div>
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label fw-bold">Description</label>
+                        <textarea name="description" class="form-control" rows="4">{{ property.description }}</textarea>
+                    </div>
+
+                    <div class="mb-4">
+                        <label class="form-label fw-bold">Property Image (Leave empty to keep current)</label>
+                        <input type="file" name="image" class="form-control" accept="image/*">
+                    </div>
+
+                    <div class="d-flex justify-content-between">
+                        <a href="{% url 'my-properties-ui' %}" class="btn btn-secondary">Cancel</a>
+                        <button type="submit" class="btn btn-success fw-bold px-4">Update Property</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

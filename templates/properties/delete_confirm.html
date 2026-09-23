@@ -1,0 +1,20 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="container my-5 text-center">
+    <div class="row justify-content-center">
+        <div class="col-md-6">
+            <div class="card shadow-lg border-0 p-4 rounded-3">
+                <h3 class="text-danger fw-bold mb-3">⚠️ Delete Property</h3>
+                <p class="fs-5">Do you really want to delete? <strong>"{{ property.title }}"</strong> </p>
+                
+                <form method="POST" class="mt-4">
+                    {% csrf_token %}
+                    <a href="{% url 'my-properties-ui' %}" class="btn btn-secondary me-2">No, Cancel</a>
+                    <button type="submit" class="btn btn-danger fw-bold">Yes, Delete</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

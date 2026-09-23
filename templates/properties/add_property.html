@@ -1,0 +1,61 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="container my-5">
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <div class="card shadow-lg border-0 p-4 rounded-3">
+                <h3 class="fw-bold mb-4 text-center">🏡 Add New Property Listing</h3>
+                
+                <form method="POST" enctype="multipart/form-data" action="{% url 'add-property-ui' %}">
+                    {% csrf_token %}
+                    
+                    <div class="mb-3">
+                        <label class="form-label fw-bold">Property Title</label>
+                        <input type="text" name="title" class="form-control" placeholder="e.g. Modern 3-Bedroom Villa" required>
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label fw-bold">Location / Address</label>
+                        <input type="text" name="location" class="form-control" placeholder="e.g. Gulberg, Lahore" required>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label fw-bold">Price ($)</label>
+                            <input type="number" name="price" class="form-control" placeholder="250000" required>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label fw-bold">Area (SqFt)</label>
+                            <input type="number" name="area_sqft" class="form-control" placeholder="1500" required>
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label fw-bold">Bedrooms</label>
+                            <input type="number" name="bedrooms" class="form-control" placeholder="3" required>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label fw-bold">Bathrooms</label>
+                            <input type="number" name="bathrooms" class="form-control" placeholder="2" required>
+                        </div>
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label fw-bold">Description</label>
+                        <textarea name="description" class="form-control" rows="4" placeholder="Enter property details..."></textarea>
+                    </div>
+
+                    <div class="mb-4">
+                        <label class="form-label fw-bold">Property Image</label>
+                        <input type="file" name="image" class="form-control" accept="image/*">
+                    </div>
+
+                    <button type="submit" class="btn btn-primary w-100 py-2 fw-bold shadow-sm">Submit Property</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

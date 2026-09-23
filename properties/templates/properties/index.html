@@ -1,0 +1,94 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <h2 class="fw-bold">Featured Properties</h2>
+    <!-- Property Add karne ka button -->
+    <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#addPropertyModal">
+        + Add New Property
+    </button>
+</div>
+
+<!-- Property Listings Grid -->
+<div class="row">
+    {% for property in properties %}
+    <div class="col-md-4 mb-4">
+        <div class="card h-100 shadow-sm">
+            {% if property.image %}
+                <img src="{{ property.image.url }}" class="card-img-top" alt="{{ property.title }}" style="height: 200px; object-fit: cover;">
+            {% else %}
+                <img src="https://via.placeholder.com/300x200?text=No+Image" class="card-img-top" alt="Placeholder">
+            {% endif %}
+            <div class="card-body">
+                <span class="badge bg-primary mb-2">{{ property.get_property_type_display|default:property.property_type }}</span>
+                <h5 class="card-title fw-bold">{{ property.title }}</h5>
+                <p class="card-text text-muted mb-1">📍 {{ property.city }}</p>
+                <h6 class="text-success fw-bold fs-5">${{ property.asking_price }}</h6>
+                <p class="card-text small text-secondary mt-2">{{ property.description|default:"No description provided."|truncatewords:12 }}</p>
+            </div>
+            <div class="card-footer bg-white border-top-0 d-flex justify-content-between text-muted small">
+                <span>By: {{ property.owner.username|default:"Admin" }}</span>
+                <span>{{ property.created_at|date:"M d, Y" }}</span>
+            </div>
+        </div>
+    </div>
+    {% empty %}
+    <div class="col-12">
+        <div class="alert alert-info text-center py-4">
+            <h5>No property listings available right now.</h5>
+            <p class="mb-0">Click on <strong>"+ Add New Property"</strong> button above to list a property!</p>
+        </div>
+    </div>
+    {% endfor %}
+</div>
+
+<!-- Modal Form for Adding Property -->
+<div class="modal fade" id="addPropertyModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header bg-primary text-white">
+                <h5 class="modal-title">List a New Property</h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <form action="{% url 'add-property-ui' %}" method="POST" enctype="multipart/form-data">
+                {% csrf_token %}
+                <div class="modal-body">
+                    <div class="mb-3">
+                        <label class="form-label">Property Title</label>
+                        <input type="text" name="title" class="form-control" placeholder="e.g. Modern Villa in Gulberg" required>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">City</label>
+                        <input type="text" name="city" class="form-control" placeholder="e.g. Lahore" required>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Property Type</label>
+                        <select name="property_type" class="form-select">
+                            <option value="HOUSE">House</option>
+                            <option value="APARTMENT">Apartment</option>
+                            <option value="PLOT">Plot</option>
+                            <option value="COMMERCIAL">Commercial</option>
+                        </select>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Asking Price ($)</label>
+                        <input type="number" name="asking_price" class="form-control" placeholder="250000" required>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Description</label>
+                        <textarea name="description" class="form-control" rows="3" placeholder="Property details..."></textarea>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Property Image</label>
+                        <input type="file" name="image" class="form-control" accept="image/*">
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                    <button type="submit" class="btn btn-success">Save Property</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}

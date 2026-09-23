@@ -1,0 +1,73 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-md-6">
+        <div class="card shadow">
+            <div class="card-header bg-primary text-white">
+                <h4 class="mb-0">ML Valuation Engine</h4>
+            </div>
+            <div class="card-body">
+                <form id="prediction-form">
+                    {% csrf_token %}
+                    <div class="mb-3">
+                        <label class="form-label">Area (Sqft)</label>
+                        <input type="number" id="area_sqft" class="form-control" placeholder="e.g. 1500" required>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Bedrooms</label>
+                        <input type="number" id="bedrooms" class="form-control" placeholder="e.g. 3" required>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Bathrooms</label>
+                        <input type="number" id="bathrooms" class="form-control" placeholder="e.g. 2" required>
+                    </div>
+                    <button type="submit" class="btn btn-success w-100">Calculate Estimated Valuation</button>
+                </form>
+
+                <div id="result-box" class="mt-4 d-none alert alert-success">
+                    <h5 class="alert-heading">Estimated Market Price:</h5>
+                    <h3 id="predicted-price-text" class="fw-bold mb-0"></h3>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+document.getElementById('prediction-form').addEventListener('submit', function(e) {
+    e.preventDefault();
+
+    const payload = {
+        area_sqft: parseFloat(document.getElementById('area_sqft').value),
+        bedrooms: parseInt(document.getElementById('bedrooms').value),
+        bathrooms: parseInt(document.getElementById('bathrooms').value)
+    };
+
+    fetch('/api/ml/predict-price/', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+            'Accept': 'application/json'
+        },
+        body: JSON.stringify(payload)
+    })
+    .then(response => {
+        if (!response.ok) {
+            throw new Error('HTTP status ' + response.status);
+        }
+        return response.json();
+    })
+    .then(data => {
+        document.getElementById('predicted-price-text').innerText = `$${data.estimated_price} USD`;
+        document.getElementById('result-box').classList.remove('d-none');
+    })
+    .catch(err => {
+        console.error('Error:', err);
+        alert('Prediction Error: ' + err.message);
+    });
+});
+</script>
+{% endblock %}

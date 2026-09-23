@@ -1,0 +1,19 @@
+# Virtual Environment
+.venv/
+venv/
+ENV/
+
+# Database
+db.sqlite3
+
+# Python Cache & Secrets
+*.pyc
+__pycache__/
+.env
+
+# Media uploads (optional)
+media/
+*.zip
+*.mp4
+*.avi
+*.mov

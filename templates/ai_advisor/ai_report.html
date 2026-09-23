@@ -1,0 +1,43 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="container my-5">
+    <div class="row justify-content-center">
+        <div class="col-md-9">
+            <div class="card shadow-lg border-0 p-4 rounded-3">
+                <div class="d-flex justify-content-between align-items-center mb-3">
+                    <h3 class="fw-bold m-0">🤖 AI Investment Report</h3>
+                    <a href="{% url 'property-detail-ui' property.id %}" class="btn btn-outline-secondary btn-sm">← Back to Property</a>
+                </div>
+                <hr>
+
+                <div class="mb-4">
+                    <h5 class="fw-bold">{{ property.title }}</h5>
+                    <p class="text-muted">📍 {{ property.city }} | 💵 Price: ${% if property.asking_price %}{{ property.asking_price }}{% else %}{{ property.price }}{% endif %}</p>
+                </div>
+
+                {% if not report %}
+                    <form method="POST">
+                        {% csrf_token %}
+                        <div class="text-center py-5 bg-light rounded-3">
+                            <p class="mb-3 text-muted fs-5">Generate AI-powered Risk Assessment and Market Analysis report of this Property.</p>
+                            <button type="submit" class="btn btn-primary btn-lg fw-bold px-4">✨ Generate AI Report</button>
+                        </div>
+                    </form>
+                {% else %}
+                    <div class="bg-light p-4 rounded-3 border">
+                        <div class="d-flex justify-content-between align-items-center mb-3">
+                            <span class="badge bg-success fs-6">Status: {{ report.risk_score }}</span>
+                            <small class="text-muted">{{ report.created_at|default:"" }}</small>
+                        </div>
+                        <hr>
+                        <div class="lh-lg">
+                            {{ report.ai_market_summery|linebreaks }}
+                        </div>
+                    </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

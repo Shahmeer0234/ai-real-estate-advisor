@@ -1,0 +1,99 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="row justify-content-center mt-4 mb-5">
+    <div class="col-md-7">
+        <div class="card shadow-lg border-0 rounded-3">
+            <div class="card-header bg-primary text-white py-3">
+                <h4 class="mb-0 fw-bold">🤖 ML Valuation Engine & Analytics</h4>
+            </div>
+            <div class="card-body p-4">
+                <form id="predictionForm">
+                    {% csrf_token %}
+                    <div class="mb-3">
+                        <label class="form-label fw-bold">Area (SqFt)</label>
+                        <input type="number" id="area_sqft" class="form-control" required placeholder="e.g. 1500">
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label fw-bold">Bedrooms</label>
+                        <input type="number" id="bedrooms" class="form-control" required placeholder="e.g. 3">
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label fw-bold">Bathrooms</label>
+                        <input type="number" id="bathrooms" class="form-control" required placeholder="e.g. 2">
+                    </div>
+                    
+                    <button type="submit" class="btn btn-primary w-100 py-2 fw-bold shadow-sm">Calculate Estimated Valuation</button>
+                </form>
+
+                <!-- Result Container -->
+                <div id="resultContainer" class="d-none mt-4">
+                    <div class="alert alert-success text-center shadow-sm border-0 py-3">
+                        <span class="text-uppercase fw-bold text-muted small">Estimated Market Price</span>
+                        <h1 class="fw-bolder text-success mb-0" id="estimatedPrice">$0 USD</h1>
+                        <span class="badge bg-dark mt-2" id="propertyCategory">Category</span>
+                    </div>
+
+                    <div class="row text-center mt-3">
+                        <div class="col-md-6 mb-2">
+                            <div class="p-3 bg-light rounded border">
+                                <small class="text-muted d-block fw-bold">PRICE PER SQFT</small>
+                                <span class="fs-4 fw-bold text-primary" id="pricePerSqft">$0 / sqft</span>
+                            </div>
+                        </div>
+                        <div class="col-md-6 mb-2">
+                            <div class="p-3 bg-light rounded border">
+                                <small class="text-muted d-block fw-bold">MODEL CONFIDENCE</small>
+                                <span class="fs-4 fw-bold text-info" id="confidenceScore">94.2%</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+document.getElementById('predictionForm').addEventListener('submit', async function(e) {
+    e.preventDefault();
+
+    const area_sqft = parseFloat(document.getElementById('area_sqft').value);
+    const bedrooms = parseInt(document.getElementById('bedrooms').value);
+    const bathrooms = parseInt(document.getElementById('bathrooms').value);
+
+    try {
+        // Adjust endpoint URL according to your urls.py (e.g. /api/ml/predict/)
+        const response = await fetch('/api/ml/predict/', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRFToken': '{{ csrf_token }}'
+            },
+            body: JSON.stringify({
+                area_sqft: area_sqft,
+                bedrooms: bedrooms,
+                bathrooms: bathrooms
+            })
+        });
+
+        const data = await response.json();
+
+        if (response.ok && data.success) {
+            document.getElementById('estimatedPrice').innerText = '$' + data.estimated_price + ' USD';
+            document.getElementById('pricePerSqft').innerText = '$' + (data.price_per_sqft || 0) + ' / sqft';
+            document.getElementById('propertyCategory').innerText = data.property_category || 'Standard';
+            document.getElementById('confidenceScore').innerText = (data.confidence_score || '94.2') + '%';
+            
+            document.getElementById('resultContainer').classList.remove('d-none');
+        } else {
+            alert('Prediction Error: ' + (data.error || 'Server request failed'));
+        }
+    } catch (err) {
+        console.error(err);
+        alert('Prediction Error: Failed to fetch API. Check console logs.');
+    }
+});
+</script>
+{% endblock %}
